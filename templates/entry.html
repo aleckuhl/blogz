@@ -6,6 +6,8 @@
     {% endfor %}
     {% for blog in blogs %}
         <p>{{blog.body}}</p>
-    {% endfor %}    
+        <p><em>Written by {{blog.owner.username}}</em></p>
+    {% endfor %} 
+       
 
 {% endblock %}    
