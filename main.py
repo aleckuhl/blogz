@@ -35,7 +35,7 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup']
+    allowed_routes = ['login', 'signup','home','base','entry','index','login','myBlog','signup']
     if request.endpoint not in allowed_routes and 'user' not in session:
         return redirect('/login')
 @app.route('/', methods=['POST', 'GET'])
@@ -45,6 +45,7 @@ def index():
     blog_owner = User.query.filter_by(id=userID).first()
     blogs = []
     username = ""
+    user = ""
     if blogID is None:
         if request.method == 'POST':
             blog_title = request.form['title']
@@ -52,7 +53,8 @@ def index():
             new_blog = Blog(blog_title,blog_body)
             db.session.add(new_blog)
             db.session.commit()
-        user = User.query.filter_by(username=session['user']).first()
+        if 'user' in session:
+            user = User.query.filter_by(username=session['user']).first()
         if user != None and userID == None:
             blogs = Blog.query
         else:  
@@ -109,7 +111,7 @@ def login():
                 login_flag = True
                
         if login_flag == True:
-            return redirect('/new_entry')        
+            return redirect('/home')        
         else:
             return render_template('login.html',title='Blogz',user_error=user_error,password_error=password_error)
     else:
@@ -144,7 +146,7 @@ def signup():
             db.session.add(user)
             db.session.commit()
             session['user'] = username
-            return redirect('/new_entry')
+            return redirect('/home')
         else:
             return render_template('signup.html', title = 'Blogz', password_error=password_error,username_error=username_error,verify_error=verify_error)
     else:
